@@ -1,5 +1,6 @@
 // Instead of creating a window object with a book, you have a window object and you have a setter that puts in the book later
 // Put all visual stuff inside a second method
+import de.bezier.data.sql.*;
 
 Library l;
 Window w;
@@ -17,7 +18,15 @@ void setup() {
   b1 = new Book("Test", 2, p, cover1);
   Book b2 = new Book("Test2", 1, p2, cover2);
   Book b3 = new Book("Test3", 1, p2, cover2);
-  
+  // Database is running with sqlite in the same Reading-app folder.
+  SQLite db = new SQLite(this, "/Users/league/Desktop/Reading-app/mydatabase.db");
+  Book b4;
+  if (db.connect()) {
+   db.query("SELECT * FROM books;"); // this selects every book, you can select however you'd like
+   // From here create b4 with some SQL data. Then test book4 to see if it works.
+   // I'm not sure if the SQL file will work -- there is no totalPages for the books.
+   // To get a string, you'd do database.getString("name_of_category");
+  }
   w = new Window();
   
   l = new Library();
