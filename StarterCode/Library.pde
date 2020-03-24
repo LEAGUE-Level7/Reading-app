@@ -27,8 +27,9 @@ class Library {
 
   ControlP5 cp5;
   
-  Textfield tf;
+  Textfield libarySearch;
   Button clear;
+  Button toStore;
 
   String searchQuery;
   
@@ -59,17 +60,17 @@ class Library {
     button2Clicked = false;
 
     cp5 = new ControlP5(p);
-    tf = cp5.addTextfield("Search");
-    tf.setPosition(width*330/500, height*25/500-(height*10/500));
-    tf.setSize(width*100/500, height*20/500);
-    tf.setFont(createFont("Arial", 16));
-    tf.setFocus(true);
-    tf.setAutoClear(false);
-    tf.setVisible(false);
-    tf.setColor(color(0));
-    tf.setColorBackground(color(255));
-    tf.setColorForeground(color(255));
-    tf.setColorCursor(color(0));
+    libarySearch = cp5.addTextfield("Search");
+    libarySearch.setPosition(width*330/500, height*25/500-(height*10/500));
+    libarySearch.setSize(width*100/500, height*20/500);
+    libarySearch.setFont(createFont("Arial", 16));
+    libarySearch.setFocus(true);
+    libarySearch.setAutoClear(false);
+    libarySearch.setVisible(false);
+    libarySearch.setColor(color(0));
+    libarySearch.setColorBackground(color(255));
+    libarySearch.setColorForeground(color(255));
+    libarySearch.setColorCursor(color(0));
     clear = cp5.addButton("Clear");
     clear.setPosition(width*440/500, height*25/500-(height*10/500));
     clear.setSize(width*50/500, height*20/500);
@@ -78,6 +79,14 @@ class Library {
     clear.setColorForeground(color(90));
     clear.setColorActive(color(70));
     clear.setFont(createFont("Arial", 11));
+    toStore = cp5.addButton("Store")
+    .setPosition(width*40/500, height*25/500-(height*10/500))
+    .setSize(width*50/500, height*20/500)
+    .setVisible(false)
+    .setColorBackground(color(110))
+    .setColorForeground(color(90))
+    .setColorActive(color(70))
+    .setFont(createFont("Arial", 11));
 
     searchQuery = "";
     libraryPages = null;
@@ -106,13 +115,14 @@ class Library {
   //draws the library
   void drawLibrary(){
     clear();
-    tf.setVisible(true);
+    libarySearch.setVisible(true);
     clear.setVisible(true);
+    toStore.setVisible(true);
     cp5.getController("Search").getCaptionLabel().setVisible(false);
 
-    if(tf.isFocus() && keyPressed) {
+    if(libarySearch.isFocus() && keyPressed) {
       if(key==ENTER || key==RETURN) {
-        searchQuery = tf.getText();
+        searchQuery =  libarySearch.getText();
         spot = 0;
         currentPage = 0;
       }
@@ -160,7 +170,7 @@ class Library {
     // 1/30th (1/3 of 1/10 of height)
     fill(255);
     textSize((int) ((double)1 / (double)15 * (double)height));
-    text("Your Library", (int)((double)1/(double)40 * (double)width), (int)((double)3/(double)40 * (double)height));
+    text("Your Library", (int)((double)10/(double)40 * (double)width), (int)((double)3/(double)40 * (double)height));
     // Line
     fill(255, 255, 2500);
     stroke(126);
@@ -205,32 +215,36 @@ class Library {
         w.setBook(libraryPages.get(currentPage).get(0));
         //w.drawWindow();
         inWindow=true;
-        tf.setVisible(false);
+        libarySearch.setVisible(false);
         clear.setVisible(false);
+        toStore.setVisible(false);
       }
       if (booksOnPage>=2 && mouseX > 289 && mouseX < 427 && mouseY > 99 && mouseY < 241){
         inLibrary = false;
         w.setBook(libraryPages.get(currentPage).get(1));
         //w.drawWindow();
         inWindow=true;
-        tf.setVisible(false);
+        libarySearch.setVisible(false);
         clear.setVisible(false);
+        toStore.setVisible(false);
       }
       if (booksOnPage>=3 && mouseX > 78 && mouseX < 214 && mouseY > 314 && mouseY < 453){
         inLibrary = false;
         w.setBook(libraryPages.get(currentPage).get(2));
         //w.drawWindow();
         inWindow=true;
-        tf.setVisible(false);
+        libarySearch.setVisible(false);
         clear.setVisible(false);
+        toStore.setVisible(false);
       }
       if (booksOnPage>=4 && mouseX > 289 && mouseX < 427 && mouseY > 314 && mouseY < 453){
         inLibrary = false;
         w.setBook(libraryPages.get(currentPage).get(3));
         //w.drawWindow();
         inWindow=true;
-        tf.setVisible(false);
+        libarySearch.setVisible(false);
         clear.setVisible(false);
+        toStore.setVisible(false);
       }
      }
   }
@@ -265,7 +279,7 @@ class Library {
 
   public void clearSearch() {
     searchQuery = "";
-    tf.setText("");
+    libarySearch.setText("");
   }
 
   
