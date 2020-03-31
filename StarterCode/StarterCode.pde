@@ -3,9 +3,11 @@
 
 Library l;
 Window w;
+Store s;
 int currentPage;
 public static boolean inLibrary = true;
 public static boolean inWindow = false;
+public static boolean inStore = false;
 
 void setup() {
   size(750, 750);
@@ -22,6 +24,7 @@ void setup() {
   
   w = new Window(b1);
   l = new Library(this);
+  s = new Store(this);
   
   currentPage = l.getCurrentPage();
   
@@ -38,10 +41,20 @@ void draw() {
   // 81, 241
   // 221, 239
   //draws the library
-  if (inLibrary) l.drawLibrary();
+  if (inLibrary) {
+    l.drawLibrary();
+    s.toLibrary.setVisible(false);
+  }
   // draws the book
   //w.draw();
   if (inWindow) w.drawWindow();
+
+  if (inStore) {
+    s.drawStore();
+    l.clear.setVisible(false);
+    l.libarySearch.setVisible(false);
+    l.toStore.setVisible(false);
+  }
 }
 
 void mousePressed() {
@@ -55,5 +68,13 @@ void mouseReleased() {
 public void controlEvent(ControlEvent e) {
     if(e.getController().getName().equals("Clear")) {
       l.clearSearch();
+    }
+    if(e.getController().getName().equals("Store")) {
+      inLibrary = false;
+      inStore = true;
+    }
+    if(e.getController().getName().equals("Library")) {
+      inStore = false;
+      inLibrary = true;
     }
 }
