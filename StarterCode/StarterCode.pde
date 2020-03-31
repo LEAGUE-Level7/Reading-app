@@ -52,7 +52,7 @@ void draw() {
   if (inStore) {
     s.drawStore();
     l.clear.setVisible(false);
-    l.libarySearch.setVisible(false);
+    l.librarySearch.setVisible(false);
     l.toStore.setVisible(false);
   }
 }
@@ -68,12 +68,19 @@ void mouseReleased() {
 public void controlEvent(ControlEvent e) {
     if(e.getController().getName().equals("Clear")) {
       l.clearSearch();
+      s.clearSearch();
     }
     if(e.getController().getName().equals("Store")) {
+      for(Controller c : l.widgets) {
+        c.setVisible(false);
+      }
       inLibrary = false;
       inStore = true;
     }
     if(e.getController().getName().equals("Library")) {
+      for(Controller c : s.widgets) {
+        c.setVisible(false);
+      }
       inStore = false;
       inLibrary = true;
     }

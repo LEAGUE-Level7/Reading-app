@@ -27,13 +27,15 @@ class Library {
 
   ControlP5 cp5;
   
-  Textfield libarySearch;
+  Textfield librarySearch;
   Button clear;
   Button toStore;
 
   String searchQuery;
 
   ArrayList<ArrayList<Book>> libraryPages;
+
+  Controller[] widgets;
 
   //constructors
   public Library(PApplet p) {
@@ -71,17 +73,17 @@ class Library {
     button2Clicked = false;
 
     cp5 = new ControlP5(p);
-    libarySearch = cp5.addTextfield("Search");
-    libarySearch.setPosition(width*330/500, height*25/500-(height*10/500));
-    libarySearch.setSize(width*100/500, height*20/500);
-    libarySearch.setFont(createFont("Arial", 16));
-    libarySearch.setFocus(true);
-    libarySearch.setAutoClear(false);
-    libarySearch.setVisible(false);
-    libarySearch.setColor(color(0));
-    libarySearch.setColorBackground(color(255));
-    libarySearch.setColorForeground(color(255));
-    libarySearch.setColorCursor(color(0));
+    librarySearch = cp5.addTextfield("LibrarySearch");
+    librarySearch.setPosition(width*330/500, height*25/500-(height*10/500));
+    librarySearch.setSize(width*100/500, height*20/500);
+    librarySearch.setFont(createFont("Arial", 16));
+    librarySearch.setFocus(true);
+    librarySearch.setAutoClear(false);
+    librarySearch.setVisible(false);
+    librarySearch.setColor(color(0));
+    librarySearch.setColorBackground(color(255));
+    librarySearch.setColorForeground(color(255));
+    librarySearch.setColorCursor(color(0));
     clear = cp5.addButton("Clear");
     clear.setPosition(width*440/500, height*25/500-(height*10/500));
     clear.setSize(width*50/500, height*20/500);
@@ -100,6 +102,11 @@ class Library {
     .setFont(createFont("Arial", 11));
 
     searchQuery = "";
+
+    widgets = new Controller[3];
+    widgets[0] = librarySearch;
+    widgets[1] = clear;
+    widgets[2] = toStore;
   }
 
   public Library(PApplet p, TreeMap<String, Book> books) {
@@ -124,14 +131,14 @@ class Library {
   //draws the library
   void drawLibrary() {
     clear();
-    libarySearch.setVisible(true);
+    librarySearch.setVisible(true);
     clear.setVisible(true);
     toStore.setVisible(true);
-    cp5.getController("Search").getCaptionLabel().setVisible(false);
+    cp5.getController("LibrarySearch").getCaptionLabel().setVisible(false);
 
-    if(libarySearch.isFocus() && keyPressed) {
+    if(librarySearch.isFocus() && keyPressed) {
       if(key==ENTER || key==RETURN) {
-        searchQuery =  libarySearch.getText();
+        searchQuery =  librarySearch.getText();
         spot = 0;
         currentPage = 0;
       }
@@ -231,8 +238,9 @@ class Library {
           inLibrary = false;
           w.setBook(libraryPages.get(currentPage).get(columns*currentRow+currentColumn));
           inWindow=true;
-          tf.setVisible(false);
+          librarySearch.setVisible(false);
           clear.setVisible(false);
+          toStore.setVisible(false);
         }
       }
     }
@@ -267,6 +275,7 @@ class Library {
 
   public void clearSearch() {
     searchQuery = "";
-    libarySearch.setText("");
+    librarySearch.setText("");
+    currentPage = 0;
   }
 }
