@@ -134,7 +134,7 @@ public void controlEvent(ControlEvent e) {
 }
 
 public void getData(){
-        int id;
+      int id;
       String author;
       int copyright;
       String description;
@@ -142,9 +142,8 @@ public void getData(){
       int pageNumber;
       String title;
       String sql;
-        if (db.connect()){
+      if (db.connect()) {
         println("Total number of items in the cloud: " + values.size());
-        
         for (int i = 0; i < values.size(); i++){
           id = values.getJSONObject(i).getInt("id");          
           author = values.getJSONObject(i).getString("author");
