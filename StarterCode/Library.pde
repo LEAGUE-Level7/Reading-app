@@ -130,6 +130,7 @@ class Library {
     libraryPages = convertToMat(searchQuery);
 
     //num of books in libraryPages
+
     int numBooks = libraryPages.size() == 0 ? 0 : 4*(libraryPages.size()-1)+libraryPages.get(libraryPages.size()-1).size();
     
     //button click checks
