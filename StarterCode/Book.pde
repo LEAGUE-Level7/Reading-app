@@ -12,17 +12,18 @@ class Book {
  private Page[] pages;
 
  public Book(String title, int nPages, Page[] pages, String coverFile) {
-   if(pages.length != nPages) {
-     System.out.println("Page number mismatch");
-   }
-   
-   this.pages = pages;
-   this.title = title;
-   this.nPages = nPages;
-   this.pages = pages;
-   currentPage = pages[0];
-   curPageN = 1;
-   coverImg = loadImage(coverFile);
+  if(nPages!=0) {
+    currentPage = pages[0];   
+  }
+  if(pages.length != nPages) {
+    System.out.println("Page number mismatch");
+  }
+  this.pages = pages;
+  this.title = title;
+  this.nPages = nPages;
+  this.pages = pages;
+  curPageN = 1;
+  coverImg = loadImage(coverFile);
  }
  
  public String getTitle() {

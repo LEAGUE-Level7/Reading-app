@@ -77,9 +77,10 @@ void setup() {
   
   background(0, 0, 0);
   
-  l.addBook(b1);
+  //l.addBook(b1);
   //l.addBook(b2);
   //l.addBook(b3);
+  println(l.books.size());
 }
 
 void draw() {

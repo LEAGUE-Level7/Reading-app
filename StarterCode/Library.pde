@@ -53,11 +53,7 @@ class Library {
     books.put("User Guide7", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
     books.put("User Guide8", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
     books.put("User Guide9", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-    books.put("User Guide10", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-    books.put("User Guide11", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-    books.put("User Guide12", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-    books.put("User Guide13", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-
+    
     spot = 0;
     columns = width/250;
     currentPage = 0;
@@ -148,7 +144,7 @@ class Library {
 
     //num of books in libraryPages
 
-    int numBooks = libraryPages.size() == 0 ? 0 : 4*(libraryPages.size()-1)+libraryPages.get(libraryPages.size()-1).size();
+    int numBooks = libraryPages.size() == 0 ? 0 : columns*columns*(libraryPages.size()-1)+libraryPages.get(libraryPages.size()-1).size();
     
     //button click checks
     if (spot*columns*columns+columns*columns < numBooks) {

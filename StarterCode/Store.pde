@@ -14,11 +14,13 @@ class Store {
   SQLite db;
   RetrieveData rd = new RetrieveData();
 
-  ArrayList<String> bookImages;
-  ArrayList<ArrayList<String>> imageMat;
+  ArrayList<Book> books;
+  ArrayList<ArrayList<Book>> storeMat;
 
   int cPage;
   int columns;
+
+  boolean prompt;
   
   public Store(PApplet p) {
     cp5 = new ControlP5(p);
@@ -60,10 +62,12 @@ class Store {
     cPage = 0;
     columns = width/250;
 
-    bookImages = new ArrayList<String>();
-    imageMat = new ArrayList<ArrayList<String>>();
+    books = new ArrayList<Book>();
+    storeMat = new ArrayList<ArrayList<Book>>();
 
     db = new SQLite(new StarterCode(), "readingapp.db");
+
+    prompt = false;
 
     try{
       println(rd.retrieveData("http://localhost:8080/all"));
@@ -73,24 +77,26 @@ class Store {
         println("JSONArray could not be parsed");
       } else{
         for(int i = 0; i < values.size(); i++) {
-          bookImages.add(values.getJSONObject(i).getString("image"));
+          String title = values.getJSONObject(i).getString("title");
+          String img = values.getJSONObject(i).getString("image");
+          books.add(new Book(title, 0, new Page[] {}, img));
         }
-      }
-    
+      } 
     }catch (Exception e){
       println(e);
     }
   }
 
   public void drawStore() {
-    imageMat = convertToMat(searchQuery);
+    storeMat = convertToMat(searchQuery);
     clear();
+    background(229, 191, 167);
     storeSearch.setVisible(true);
     clear.setVisible(true);
     toLibrary.setVisible(true);
     cp5.getController("StoreSearch").getCaptionLabel().setVisible(false);
 
-    int numBooks = imageMat.size() == 0 ? 0 : 4*(imageMat.size()-1)+imageMat.get(imageMat.size()-1).size();
+    int numBooks = storeMat.size() == 0 ? 0 : columns*columns*(storeMat.size()-1)+storeMat.get(storeMat.size()-1).size();
 
     if(storeSearch.isFocus() && keyPressed) {
       if(key==ENTER || key==RETURN) {
@@ -99,20 +105,52 @@ class Store {
       }
     }
 
-    fill(255);
+    //button click checks
+    if (cPage*columns*columns+columns*columns < numBooks) {
+      fill(254, 254, 254);
+      triangle(0.93*width, 0.45*height, 0.97*width, 0.5*height, 0.93*width, 0.55*height);
+      if (mousePressed) {
+        color c = get(mouseX, mouseY);
+        if (c == color(254, 254, 254)) {
+          fill(1, 1, 1);
+          cPage++;
+        }
+        delay(50);
+      }
+      triangle(0.93*width, 0.45*height, 0.97*width, 0.5*height, 0.93*width, 0.55*height);
+    }
+
+    // Draws back arrow
+    if (cPage>0) {
+      fill(253, 253, 253);
+      triangle(0.07*width, 0.45*height, 0.03*width, 0.5*height, 0.07*width, 0.55*height);
+      if (mousePressed) {
+        color c = get(mouseX, mouseY);
+        if (c == color(253, 253, 253)) {
+          fill(50, 50, 50);
+          cPage--;
+        } 
+        delay(50);
+      }
+    }
+
+    fill(0);
     textSize((int) ((double)1 / (double)15 * (double)height));
     text("Store", (int)((double)17/(double)40 * (double)width), (int)((double)3/(double)40 * (double)height));
     // Line
-    fill(255, 255, 2500);
+    fill(255, 255, 250);
     stroke(126);
     // Line across screen at 10% down
     line(0, (int)((double)height/(double)10), width, (int)((double)height/(double)10));
 
     if(numBooks!=0) {
-      drawBooks(); 
+      drawBooks();
+      implementButtons();
     } else {
       //either no books to show or book not found
     }
+
+    if(prompt) promptUser();
   }
 
   void clearSearch() {
@@ -121,29 +159,29 @@ class Store {
     cPage = 0;
   }
 
-  ArrayList<ArrayList<String>> convertToMat(String filter) {
-    ArrayList<ArrayList<String>> imageMat = new ArrayList<ArrayList<String>>();
-    ArrayList<String> temporaryList = new ArrayList<String>();
+  ArrayList<ArrayList<Book>> convertToMat(String filter) {
+    ArrayList<ArrayList<Book>> storeMat = new ArrayList<ArrayList<Book>>();
+    ArrayList<Book> temporaryList = new ArrayList<Book>();
     int it = 0;
-    for (String s : bookImages) {
+    for (Book b : books) {
       if (filter.equals("")) {
-        temporaryList.add(s);
-      } else if (s.toLowerCase().contains(filter.toLowerCase())) {
-        temporaryList.add(s);
+        temporaryList.add(b);
+      } else if (b.title.toLowerCase().contains(filter.toLowerCase())) {
+        temporaryList.add(b);
       } else continue;
 
       if (it == columns*columns-1) {
         it = 0;
-        imageMat.add(temporaryList);
-        temporaryList = new ArrayList<String>();
+        storeMat.add(temporaryList);
+        temporaryList = new ArrayList<Book>();
       } else {
         it++;
       }
     }
     if (temporaryList.size() > 0) {
-      imageMat.add(temporaryList);
+      storeMat.add(temporaryList);
     }
-    return imageMat;
+    return storeMat;
   }
 
   void drawBooks() {
@@ -157,12 +195,62 @@ class Store {
 
     //drawing books that belong to spot/page
     int bookIterator = 0;
-    for (String s : imageMat.get(cPage)) {
+    for (Book b : storeMat.get(cPage)) {
       // iterate over treemap for each book.
-      PImage cover = loadImage(s);
+      PImage cover = b.coverImg;
       cover.resize(coverWidth/columns, coverHeight/columns);
       image(cover, xOffset+(bookIterator % (columns)) * xPos/columns, yOffset+(bookIterator - (bookIterator % (columns)))/(columns) * yPos/columns);
       bookIterator++;
     }
+  }
+
+  void implementButtons() {
+    if (mousePressed) {
+      int newHeight = height - (int)((double)height/(double)10);
+      int coverWidth = width*285/500;
+      int coverHeight = height*285/500;
+      float xPos = width*428/500;
+      float yPos = height*428/500;
+      float xOffset = (float) width/10;
+      float yOffset = (float)((double)height/10) + (int) ((double) 1/columns * (double) (newHeight - (double) coverHeight/columns - (double) (columns-1)* (double) yPos/columns));
+      int booksOnPage = storeMat.get(cPage).size();
+      int currentColumn = (int) ((mouseX-(int) xOffset)- (((mouseX-(int) xOffset))%((int) xPos/columns)))/((int) xPos/columns);
+      int currentRow = (int) ((mouseY-(int) yOffset)- (((mouseY-(int) yOffset))%((int) yPos/columns)))/((int) yPos/columns);
+      // top left corner button
+      if ((((mouseX-(int) xOffset))%((int) xPos/columns)) >= 0 && (((mouseY-(int) yOffset))%((int) yPos/columns)) >= 0 &&(((mouseX-(int) xOffset))%((int) xPos/columns)) <= coverWidth/columns && (((mouseY-(int) yOffset))%((int) yPos/columns)) <= coverWidth/columns) {
+        if (booksOnPage>columns*currentRow+currentColumn) {
+          println("Book: "+storeMat.get(cPage).get(columns*currentRow+currentColumn).getTitle());
+          prompt = true;
+        }
+      }
+    }
+  }
+
+  void promptUser() {
+    float pWidth = width/3;
+    float pHeight = height/3;
+    float pX = width/2-(pWidth/2);
+    float pY = height/2-(pHeight/2);
+    fill(255);
+    rect(pX, pY, pWidth, pHeight);
+    fill(0);
+    textSize(18);
+    String s = "Download this book?";
+    float offset = textWidth(s);
+    text(s, width/2-(offset/2), pY+(pHeight*3/10));
+
+    //buttons
+    fill(255);
+    textSize(12);
+    s = "Yes";
+    offset = textWidth(s);
+    float hOffset = textHeight(s);
+    rect(pX+(pWidth/4)-(pWidth/6), pY+(pHeight*5/8), pWidth/3, pHeight/6);
+    rect(pX+(3*pWidth/4)-(pWidth/6), pY+(pHeight*5/8), pWidth/3, pHeight/6);
+    text(s, px+(pWidth/4)-(offset/2), pY+(pHeight*19/24)-(hOffset/2));
+    s = "No";
+    offset = textWidth(s);
+    hOffset = textHeight(s);
+    text(s, px+(pWidth*3/4)-(offset/2), pY+(pHeight*19/24)-(hOffset/2));
   }
 }
