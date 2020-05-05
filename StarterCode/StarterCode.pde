@@ -106,11 +106,21 @@ void draw() {
 }
 
 void mousePressed() {
-  w.mousePressed();
+  if(inWindow) {
+    w.mousePressed();
+  }
 }
 
 void mouseReleased() {
-  w.mouseReleased();
+  if(inWindow) {
+    w.mouseReleased();
+  }
+}
+
+void mouseClicked() {
+  if(inStore) {
+    s.mouseClicked();
+  }
 }
 
 public void controlEvent(ControlEvent e) {

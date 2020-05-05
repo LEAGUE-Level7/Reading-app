@@ -21,6 +21,11 @@ class Store {
   int columns;
 
   boolean prompt;
+
+  float pWidth = width/3;
+  float pHeight = height/3;
+  float pX = width/2-(pWidth/2);
+  float pY = height/2-(pHeight/2);
   
   public Store(PApplet p) {
     cp5 = new ControlP5(p);
@@ -227,10 +232,6 @@ class Store {
   }
 
   void promptUser() {
-    float pWidth = width/3;
-    float pHeight = height/3;
-    float pX = width/2-(pWidth/2);
-    float pY = height/2-(pHeight/2);
     fill(255);
     rect(pX, pY, pWidth, pHeight);
     fill(0);
@@ -261,4 +262,26 @@ class Store {
     //hOffset = textHeight(s);
     text(s, pX+(pWidth*3/4)-(offset/2), base+((ascent+descent)/2));
   }
+
+  boolean inBorder(float x1, float x2, float y1, float y2) {
+    if(mouseX < x1 || mouseX > x2 || mouseY < y1 || mouseY > y2) {
+      return false;
+    }
+    return true;
+  }
+
+  void mouseClicked() {
+    //yes check
+    if(inBorder(pX+(pWidth/4)-(pWidth/6), pX+(pWidth/4)-(pWidth/6)+(pWidth/3),
+                pY+(pHeight*5/8), pY+(pHeight*5/8)+(pHeight/6))) {
+      //download book
+      println("yes");
+    } else if(inBorder(pX+(3*pWidth/4)-(pWidth/6), pX+(3*pWidth/4)-(pWidth/6)+(pWidth/3),
+                       pY+(pHeight*5/8), pY+(pHeight*5/8)+(pHeight/6))) {
+      println("no");
+      prompt = false;
+    }
+  }
 }
+
+
