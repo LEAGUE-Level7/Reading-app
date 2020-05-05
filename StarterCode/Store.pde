@@ -242,15 +242,23 @@ class Store {
     //buttons
     fill(255);
     textSize(12);
-    s = "Yes";
-    offset = textWidth(s);
-    float hOffset = textHeight(s);
     rect(pX+(pWidth/4)-(pWidth/6), pY+(pHeight*5/8), pWidth/3, pHeight/6);
     rect(pX+(3*pWidth/4)-(pWidth/6), pY+(pHeight*5/8), pWidth/3, pHeight/6);
-    text(s, px+(pWidth/4)-(offset/2), pY+(pHeight*19/24)-(hOffset/2));
+
+    fill(0);
+    float base = pY+(pHeight*17/24);
+    float scalar = 0.8;
+    float ascent = textAscent() * scalar;
+    float descent = textDescent() * scalar;
+
+    s = "Yes";
+    offset = textWidth(s);
+    //float hOffset = textHeight(s);
+    text(s, pX+(pWidth/4)-(offset/2), base+((ascent+descent)/2));
+
     s = "No";
     offset = textWidth(s);
-    hOffset = textHeight(s);
-    text(s, px+(pWidth*3/4)-(offset/2), pY+(pHeight*19/24)-(hOffset/2));
+    //hOffset = textHeight(s);
+    text(s, pX+(pWidth*3/4)-(offset/2), base+((ascent+descent)/2));
   }
 }
