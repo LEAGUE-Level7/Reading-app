@@ -19,12 +19,12 @@ public class JsonReader {
     return sb.toString();
   }
 
-  public JSONObject readJsonFromUrl(String url) throws IOException {
+  public JSONArray readJSONFromURL(String url) throws IOException {
     InputStream is = new URL(url).openStream();
     try {
       BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
       String jsonText = readAll(rd);
-      JSONObject json = parseJSONObject(jsonText);
+      JSONArray json = parseJSONArray(jsonText);
       return json;
     } finally {
       is.close();

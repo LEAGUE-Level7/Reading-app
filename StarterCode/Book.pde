@@ -11,7 +11,7 @@ class Book {
  
  private Page[] pages;
 
- public Book(String title, int nPages, Page[] pages, String coverFile) {
+ public Book(String title, int nPages, Page[] pages) {
   if(nPages!=0) {
     currentPage = pages[0];   
   }
@@ -23,8 +23,22 @@ class Book {
   this.nPages = nPages;
   this.pages = pages;
   curPageN = 1;
+ }
+
+ public Book(String title, int nPages, Page[] pages, String coverFile) {
+  this(title, nPages, pages);
   coverImg = loadImage(coverFile);
  }
+ 
+ public Book(String title, int nPages, Page[] pages, String coverFile, boolean url) {
+   this(title, nPages, pages);
+   if(url) {
+    coverImg = loadImage(coverFile, "png");
+   } else {
+    coverImg = loadImage(coverFile);
+   }
+ }
+   
  
  public String getTitle() {
    return title;

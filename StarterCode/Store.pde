@@ -7,12 +7,15 @@ class Store {
   Button clear;
   Button toLibrary;
 
+  JsonReader jr;
+  String host = "http://ec2-13-56-191-183.us-west-1.compute.amazonaws.com:8080";
+
   String searchQuery;
 
   Controller[] widgets;
 
-  SQLite db;
-  RetrieveData rd = new RetrieveData();
+  //SQLite db;
+  //RetrieveData rd = new RetrieveData();
 
   ArrayList<Book> books;
   ArrayList<ArrayList<Book>> storeMat;
@@ -70,25 +73,42 @@ class Store {
     books = new ArrayList<Book>();
     storeMat = new ArrayList<ArrayList<Book>>();
 
-    db = new SQLite(new StarterCode(), "readingapp.db");
+    //db = new SQLite(new StarterCode(), "readingapp.db");
 
     prompt = false;
 
-    try{
-      println(rd.retrieveData("http://localhost:8080/all"));
-      String data = rd.retrieveData("http://localhost:8080/all");
-      values = parseJSONArray(data);
-      if (values == null){
-        println("JSONArray could not be parsed");
-      } else{
-        for(int i = 0; i < values.size(); i++) {
-          String title = values.getJSONObject(i).getString("title");
-          String img = values.getJSONObject(i).getString("image");
-          books.add(new Book(title, 0, new Page[] {}, img));
-        }
-      } 
-    }catch (Exception e){
-      println(e);
+    // try{
+    //   println(rd.retrieveData("http://localhost:8080/all"));
+    //   String data = rd.retrieveData("http://localhost:8080/all");
+    //   values = parseJSONArray(data);
+    //   if (values == null){
+    //     println("JSONArray could not be parsed");
+    //   } else{
+    //     for(int i = 0; i < values.size(); i++) {
+    //       String title = values.getJSONObject(i).getString("title");
+    //       String img = values.getJSONObject(i).getString("image");
+    //       books.add(new Book(title, 0, new Page[] {}, img));
+    //     }
+    //   } 
+    // }catch (Exception e){
+    //   println(e);
+    // }
+
+    jr = new JsonReader();
+    try {
+      JSONArray all = jr.readJSONFromURL(host+"/all");
+      println("all: "+all.size());
+      for(int i = 0; i < all.size(); i++) {
+        JSONObject book = all.getJSONObject(i);
+        //remove line later on when cloud gets fixed (this is the only book that works)
+        if(!book.getString("title").equals("The Best Drummer")) continue;
+        String title = book.getString("title");
+        String image = book.getString("image");
+        
+        books.add(new Book(book.getString("title"), 0, new Page[] {}, host+"/download/file/"+replaceSpaces(title)+"/"+replaceSpaces(image), true));
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 
@@ -282,6 +302,8 @@ class Store {
       prompt = false;
     }
   }
+
+  String replaceSpaces(String str) {
+    return str.replaceAll(" ", "%20");
+  }
 }
-
-
