@@ -2,7 +2,7 @@
 
 
 ## Goal
-We set out to make a application that let you read books with an easy to use app that let you download and read picture books with a simple and easy to use interface.
+We set out to make a application that lets you read books with an easy to use app. It lets you download and read picture books with a simple and easy to use interface.
 
 ## Features
 ### Library
