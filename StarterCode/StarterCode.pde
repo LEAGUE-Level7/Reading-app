@@ -5,9 +5,12 @@ import de.bezier.data.sql.*;
 
 Library l;
 Window w;
+Store s;
 int currentPage;
 public static boolean inLibrary = true;
 public static boolean inWindow = false;
+public static boolean inStore = false;
+
 JSONArray values;
 //MySQL db;
 SQLite db;
@@ -29,6 +32,7 @@ void setup() {
   
   w = new Window(b1);
   l = new Library(this);
+  s = new Store(this);
   
   currentPage = l.getCurrentPage();
   
@@ -73,9 +77,10 @@ void setup() {
   
   background(0, 0, 0);
   
-  l.addBook(b1);
+  //l.addBook(b1);
   //l.addBook(b2);
   //l.addBook(b3);
+  println(l.books.size());
 }
 
 void draw() {
@@ -84,28 +89,63 @@ void draw() {
   // 81, 241
   // 221, 239
   //draws the library
-  if (inLibrary) l.drawLibrary();
+  if (inLibrary) {
+    l.drawLibrary();
+    s.toLibrary.setVisible(false);
+  }
   // draws the book
   //w.draw();
   if (inWindow) w.drawWindow();
+
+  if (inStore) {
+    s.drawStore();
+    l.clear.setVisible(false);
+    l.librarySearch.setVisible(false);
+    l.toStore.setVisible(false);
+  }
 }
 
 void mousePressed() {
-  w.mousePressed();
+  if(inWindow) {
+    w.mousePressed();
+  }
 }
 
 void mouseReleased() {
-  w.mouseReleased();
+  if(inWindow) {
+    w.mouseReleased();
+  }
+}
+
+void mouseClicked() {
+  if(inStore) {
+    s.mouseClicked();
+  }
 }
 
 public void controlEvent(ControlEvent e) {
     if(e.getController().getName().equals("Clear")) {
       l.clearSearch();
+      s.clearSearch();
+    }
+    if(e.getController().getName().equals("Store")) {
+      for(Controller c : l.widgets) {
+        c.setVisible(false);
+      }
+      inLibrary = false;
+      inStore = true;
+    }
+    if(e.getController().getName().equals("Library")) {
+      for(Controller c : s.widgets) {
+        c.setVisible(false);
+      }
+      inStore = false;
+      inLibrary = true;
     }
 }
 
 public void getData(){
-        int id;
+      int id;
       String author;
       int copyright;
       String description;
@@ -113,9 +153,8 @@ public void getData(){
       int pageNumber;
       String title;
       String sql;
-        if (db.connect()){
+      if (db.connect()) {
         println("Total number of items in the cloud: " + values.size());
-        
         for (int i = 0; i < values.size(); i++){
           id = values.getJSONObject(i).getInt("id");          
           author = values.getJSONObject(i).getString("author");

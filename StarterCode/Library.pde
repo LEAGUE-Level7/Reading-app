@@ -26,13 +26,16 @@ class Library {
   boolean button2Clicked;
 
   ControlP5 cp5;
-
-  Textfield tf;
+  
+  Textfield librarySearch;
   Button clear;
+  Button toStore;
 
   String searchQuery;
 
   ArrayList<ArrayList<Book>> libraryPages;
+
+  Controller[] widgets;
 
   //constructors
   public Library(PApplet p) {
@@ -50,11 +53,7 @@ class Library {
     books.put("User Guide7", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
     books.put("User Guide8", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
     books.put("User Guide9", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-    books.put("User Guide10", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-    books.put("User Guide11", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-    books.put("User Guide12", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-    books.put("User Guide13", new Book("User Guide", 3, examplePages, "Centered? User Guide Title.png"));
-
+    
     spot = 0;
     columns = width/250;
     currentPage = 0;
@@ -70,17 +69,17 @@ class Library {
     button2Clicked = false;
 
     cp5 = new ControlP5(p);
-    tf = cp5.addTextfield("Search");
-    tf.setPosition(width*330/500, height*25/500-(height*10/500));
-    tf.setSize(width*100/500, height*20/500);
-    tf.setFont(createFont("Arial", 16));
-    tf.setFocus(true);
-    tf.setAutoClear(false);
-    tf.setVisible(false);
-    tf.setColor(color(0));
-    tf.setColorBackground(color(255));
-    tf.setColorForeground(color(255));
-    tf.setColorCursor(color(0));
+    librarySearch = cp5.addTextfield("LibrarySearch");
+    librarySearch.setPosition(width*330/500, height*25/500-(height*10/500));
+    librarySearch.setSize(width*100/500, height*20/500);
+    librarySearch.setFont(createFont("Arial", 16));
+    librarySearch.setFocus(true);
+    librarySearch.setAutoClear(false);
+    librarySearch.setVisible(false);
+    librarySearch.setColor(color(0));
+    librarySearch.setColorBackground(color(255));
+    librarySearch.setColorForeground(color(255));
+    librarySearch.setColorCursor(color(0));
     clear = cp5.addButton("Clear");
     clear.setPosition(width*440/500, height*25/500-(height*10/500));
     clear.setSize(width*50/500, height*20/500);
@@ -89,8 +88,21 @@ class Library {
     clear.setColorForeground(color(90));
     clear.setColorActive(color(70));
     clear.setFont(createFont("Arial", 11));
+    toStore = cp5.addButton("Store")
+    .setPosition(width*40/500, height*25/500-(height*10/500))
+    .setSize(width*50/500, height*20/500)
+    .setVisible(false)
+    .setColorBackground(color(110))
+    .setColorForeground(color(90))
+    .setColorActive(color(70))
+    .setFont(createFont("Arial", 11));
 
     searchQuery = "";
+
+    widgets = new Controller[3];
+    widgets[0] = librarySearch;
+    widgets[1] = clear;
+    widgets[2] = toStore;
   }
 
   public Library(PApplet p, TreeMap<String, Book> books) {
@@ -115,13 +127,14 @@ class Library {
   //draws the library
   void drawLibrary() {
     clear();
-    tf.setVisible(true);
+    librarySearch.setVisible(true);
     clear.setVisible(true);
-    cp5.getController("Search").getCaptionLabel().setVisible(false);
+    toStore.setVisible(true);
+    cp5.getController("LibrarySearch").getCaptionLabel().setVisible(false);
 
-    if (tf.isFocus() && keyPressed) {
-      if (key==ENTER || key==RETURN) {
-        searchQuery = tf.getText();
+    if(librarySearch.isFocus() && keyPressed) {
+      if(key==ENTER || key==RETURN) {
+        searchQuery =  librarySearch.getText();
         spot = 0;
         currentPage = 0;
       }
@@ -131,7 +144,7 @@ class Library {
 
     //num of books in libraryPages
 
-    int numBooks = libraryPages.size() == 0 ? 0 : 4*(libraryPages.size()-1)+libraryPages.get(libraryPages.size()-1).size();
+    int numBooks = libraryPages.size() == 0 ? 0 : columns*columns*(libraryPages.size()-1)+libraryPages.get(libraryPages.size()-1).size();
     
     //button click checks
     if (spot*columns*columns+columns*columns < numBooks) {
@@ -168,8 +181,7 @@ class Library {
     // 1/30th (1/3 of 1/10 of height)
     fill(255);
     textSize((int) ((double)1 / (double)15 * (double)height));
-    text("Your Library", (int)((double)1/(double)40 * (double)width), (int)((double)3/(double)40 * (double)height));
-
+    text("Your Library", (int)((double)10/(double)40 * (double)width), (int)((double)3/(double)40 * (double)height));
     // Line
     fill(255, 255, 2500);
     stroke(126);
@@ -223,8 +235,9 @@ class Library {
           inLibrary = false;
           w.setBook(libraryPages.get(currentPage).get(columns*currentRow+currentColumn));
           inWindow=true;
-          tf.setVisible(false);
+          librarySearch.setVisible(false);
           clear.setVisible(false);
+          toStore.setVisible(false);
         }
       }
     }
@@ -259,6 +272,7 @@ class Library {
 
   public void clearSearch() {
     searchQuery = "";
-    tf.setText("");
+    librarySearch.setText("");
+    currentPage = 0;
   }
 }

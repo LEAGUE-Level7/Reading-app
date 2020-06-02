@@ -11,19 +11,34 @@ class Book {
  
  private Page[] pages;
 
- public Book(String title, int nPages, Page[] pages, String coverFile) {
-   if(pages.length != nPages) {
-     System.out.println("Page number mismatch");
-   }
-   
-   this.pages = pages;
-   this.title = title;
-   this.nPages = nPages;
-   this.pages = pages;
-   currentPage = pages[0];
-   curPageN = 1;
-   coverImg = loadImage(coverFile);
+ public Book(String title, int nPages, Page[] pages) {
+  if(nPages!=0) {
+    currentPage = pages[0];   
+  }
+  if(pages.length != nPages) {
+    System.out.println("Page number mismatch");
+  }
+  this.pages = pages;
+  this.title = title;
+  this.nPages = nPages;
+  this.pages = pages;
+  curPageN = 1;
  }
+
+ public Book(String title, int nPages, Page[] pages, String coverFile) {
+  this(title, nPages, pages);
+  coverImg = loadImage(coverFile);
+ }
+ 
+ public Book(String title, int nPages, Page[] pages, String coverFile, boolean url) {
+   this(title, nPages, pages);
+   if(url) {
+    coverImg = loadImage(coverFile, "png");
+   } else {
+    coverImg = loadImage(coverFile);
+   }
+ }
+   
  
  public String getTitle() {
    return title;
