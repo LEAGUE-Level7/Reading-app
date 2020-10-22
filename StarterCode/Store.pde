@@ -8,7 +8,7 @@ class Store {
   Button toLibrary;
 
   JsonReader jr;
-  String host = "http://ec2-13-56-191-183.us-west-1.compute.amazonaws.com:8080";
+  String host = "http://ec2-204-236-190-179.us-west-1.compute.amazonaws.com:8080";
 
   String searchQuery;
 
